@@ -1,0 +1,122 @@
+# 🏦 Project 2: Mini ATM Simulator (Python CLI App)
+
+    This project teaches:
+    
+    Loops, conditionals
+    
+    Variables, input/output
+    
+    Arithmetic ops
+    
+    Functions
+    
+    Dictionaries
+    
+    Validation and formatting
+print("🏦 Welcome to Python Bank ATM 🏦")
+
+# Predefined user account
+account = {
+    "name": "John Doe",
+    "pin": "1234",
+    "balance": 5000,
+    "transactions": []
+}
+
+# ---------- Helper Functions ----------
+
+def check_balance():
+    print(f"\n💰 Current Balance: ₹{account['balance']}")
+
+def deposit():
+    amount = input("Enter amount to deposit: ₹")
+    if not amount.isdigit():
+        print("❌ Invalid input, please enter a number.")
+        return
+    amount = float(amount)
+    if amount <= 0:
+        print("❌ Amount must be positive.")
+        return
+    account["balance"] += amount
+    account["transactions"].append(("Deposit", amount))
+    print(f"✅ ₹{amount} deposited successfully.")
+    check_balance()
+
+def withdraw():
+    amount = input("Enter amount to withdraw: ₹")
+    if not amount.isdigit():
+        print("❌ Invalid input, please enter a number.")
+        return
+    amount = float(amount)
+    if amount <= 0:
+        print("❌ Amount must be positive.")
+        return
+    if amount > account["balance"]:
+        print("🚫 Insufficient funds!")
+    else:
+        account["balance"] -= amount
+        account["transactions"].append(("Withdraw", amount))
+        print(f"💸 ₹{amount} withdrawn successfully.")
+        check_balance()
+
+def change_pin():
+    old_pin = input("Enter your current PIN: ")
+    if old_pin != account["pin"]:
+        print("❌ Incorrect PIN.")
+        return
+    new_pin = input("Enter new PIN: ")
+    confirm_pin = input("Confirm new PIN: ")
+    if new_pin == confirm_pin:
+        account["pin"] = new_pin
+        print("✅ PIN changed successfully!")
+    else:
+        print("❌ PINs do not match.")
+
+def show_transactions():
+    print("\n📜 Transaction History:")
+    if not account["transactions"]:
+        print("No transactions yet.")
+        return
+    
+    # Using map() and lambda
+    formatted = list(map(lambda t: f"{t[0]} of ₹{t[1]}", account["transactions"]))
+    for line in formatted:
+        print("•", line)
+
+    # Using filter() to separate deposits & withdrawals
+    deposits = list(filter(lambda t: t[0] == "Deposit", account["transactions"]))
+    withdrawals = list(filter(lambda t: t[0] == "Withdraw", account["transactions"]))
+
+    # Using list comprehension for totals
+    total_deposit = sum([t[1] for t in deposits])
+    total_withdraw = sum([t[1] for t in withdrawals])
+
+    print(f"\nSummary 💡")
+    print(f"Total Deposited: ₹{total_deposit}")
+    print(f"Total Withdrawn: ₹{total_withdraw}")
+
+# ---------- Main Flow ----------
+pin_try = input("Please enter your PIN: ")
+if pin_try != account["pin"]:
+    print("❌ Wrong PIN. Access Denied.")
+else:
+    while True:
+        print("\n🏧 ATM MENU")
+        print("1️⃣ Check Balance\n2️⃣ Deposit\n3️⃣ Withdraw\n4️⃣ Change PIN\n5️⃣ Transactions\n6️⃣ Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            check_balance()
+        elif choice == "2":
+            deposit()
+        elif choice == "3":
+            withdraw()
+        elif choice == "4":
+            change_pin()
+        elif choice == "5":
+            show_transactions()
+        elif choice == "6":
+            print("👋 Thank you for banking with Python Bank!")
+            break
+        else:
+            print("❌ Invalid option. Try again.")
